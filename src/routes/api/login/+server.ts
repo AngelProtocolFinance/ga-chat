@@ -1,10 +1,6 @@
 import { json } from "@sveltejs/kit";
+import { create_session_token, get_cookie_name, verify_password } from "$lib/server/auth";
 import type { RequestHandler } from "./$types";
-import {
-  verify_password,
-  create_session_token,
-  get_cookie_name,
-} from "$lib/server/auth";
 
 export const POST: RequestHandler = async ({ request, cookies }) => {
   const { password } = await request.json();

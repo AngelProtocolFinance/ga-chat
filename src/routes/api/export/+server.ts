@@ -29,9 +29,7 @@ function markdown_table_to_csv(markdown: string): string {
           val = `'${val}`;
         }
         // quote values containing commas, quotes, or newlines
-        return val.includes(",") || val.includes('"') || val.includes("\n")
-          ? `"${val}"`
-          : val;
+        return val.includes(",") || val.includes('"') || val.includes("\n") ? `"${val}"` : val;
       });
 
     csv_rows.push(cells.join(","));

@@ -1,6 +1,6 @@
-import type { RequestHandler } from "./$types";
 import { chat } from "$lib/server/claude";
 import type { ChatMessage } from "$lib/types";
+import type { RequestHandler } from "./$types";
 
 export const POST: RequestHandler = async ({ request }) => {
   const { messages } = (await request.json()) as { messages: ChatMessage[] };

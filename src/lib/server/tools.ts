@@ -16,8 +16,7 @@ export const tool_definitions: Anthropic.Tool[] = [
             properties: { name: { type: "string" } },
             required: ["name"],
           },
-          description:
-            'Dimensions to group by, e.g. [{"name": "date"}, {"name": "pagePath"}]',
+          description: 'Dimensions to group by, e.g. [{"name": "date"}, {"name": "pagePath"}]',
         },
         metrics: {
           type: "array",
@@ -26,8 +25,7 @@ export const tool_definitions: Anthropic.Tool[] = [
             properties: { name: { type: "string" } },
             required: ["name"],
           },
-          description:
-            'Metrics to retrieve, e.g. [{"name": "activeUsers"}, {"name": "sessions"}]',
+          description: 'Metrics to retrieve, e.g. [{"name": "activeUsers"}, {"name": "sessions"}]',
         },
         date_ranges: {
           type: "array",
@@ -50,8 +48,7 @@ export const tool_definitions: Anthropic.Tool[] = [
         },
         dimension_filter: {
           type: "object",
-          description:
-            "Optional dimension filter (GA4 FilterExpression format)",
+          description: "Optional dimension filter (GA4 FilterExpression format)",
         },
         metric_filter: {
           type: "object",
@@ -124,21 +121,16 @@ export const tool_definitions: Anthropic.Tool[] = [
 
 type ToolInput = Record<string, unknown>;
 
-export async function execute_tool(
-  name: string,
-  input: ToolInput
-): Promise<string> {
+export async function execute_tool(name: string, input: ToolInput): Promise<string> {
   try {
     let result: unknown;
     switch (name) {
       case "run_report":
-        result = await ga4.run_report(
-          input as Parameters<typeof ga4.run_report>[0]
-        );
+        result = await ga4.run_report(input as Parameters<typeof ga4.run_report>[0]);
         break;
       case "run_realtime_report":
         result = await ga4.run_realtime_report(
-          input as Parameters<typeof ga4.run_realtime_report>[0]
+          input as Parameters<typeof ga4.run_realtime_report>[0],
         );
         break;
       case "get_property_details":

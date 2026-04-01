@@ -1,5 +1,5 @@
 import Anthropic from "@anthropic-ai/sdk";
-import { tool_definitions, execute_tool } from "./tools.js";
+import { execute_tool, tool_definitions } from "./tools.js";
 
 const anthropic = new Anthropic();
 
@@ -21,9 +21,7 @@ export interface StreamEvent {
   content: string;
 }
 
-export async function* chat(
-  messages: Anthropic.MessageParam[]
-): AsyncGenerator<StreamEvent> {
+export async function* chat(messages: Anthropic.MessageParam[]): AsyncGenerator<StreamEvent> {
   // working copy of messages for tool use loop
   const working_messages = [...messages];
   let iterations = 0;
@@ -54,10 +52,7 @@ export async function* chat(
           content: `Querying GA4: ${block.name}`,
         };
 
-        const result = await execute_tool(
-          block.name,
-          block.input as Record<string, unknown>
-        );
+        const result = await execute_tool(block.name, block.input as Record<string, unknown>);
 
         yield {
           type: "tool_result",

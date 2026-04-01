@@ -1,5 +1,5 @@
 import bcrypt from "bcryptjs";
-import { SignJWT, jwtVerify } from "jose";
+import { jwtVerify, SignJWT } from "jose";
 
 const SESSION_COOKIE = "ga_chat_session";
 const password_hash = process.env.AUTH_PASSWORD_HASH ?? "";
@@ -22,9 +22,7 @@ export async function create_session_token(): Promise<string> {
     .sign(jwt_secret);
 }
 
-export async function validate_session(
-  token: string | undefined,
-): Promise<boolean> {
+export async function validate_session(token: string | undefined): Promise<boolean> {
   if (!token) return false;
   try {
     await jwtVerify(token, jwt_secret);

@@ -1,6 +1,6 @@
 import type { Handle } from "@sveltejs/kit";
 import { redirect } from "@sveltejs/kit";
-import { validate_session, get_cookie_name } from "$lib/server/auth";
+import { get_cookie_name, validate_session } from "$lib/server/auth";
 
 const PUBLIC_PATHS = ["/login", "/api/login"];
 
