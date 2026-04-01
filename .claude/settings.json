@@ -3,13 +3,23 @@
     "PostToolUse": [
       {
         "matcher": "Edit|Write",
-        "command": "pnpm exec svelte-check --threshold error --output machine 2>&1 | head -20"
+        "hooks": [
+          {
+            "type": "command",
+            "command": "pnpm exec svelte-check --threshold error --output machine 2>&1 | head -20"
+          }
+        ]
       }
     ],
     "PreToolUse": [
       {
         "matcher": "Edit|Write",
-        "command": "if echo \"$CLAUDE_TOOL_INPUT\" | grep -q '\\.env'; then echo 'BLOCKED: do not edit .env files' >&2; exit 1; fi"
+        "hooks": [
+          {
+            "type": "command",
+            "command": "if echo \"$CLAUDE_TOOL_INPUT\" | grep -q '\\.env'; then echo 'BLOCKED: do not edit .env files' >&2; exit 1; fi"
+          }
+        ]
       }
     ]
   }

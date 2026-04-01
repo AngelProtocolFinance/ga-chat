@@ -3,6 +3,11 @@ let password = $state("");
 let error = $state("");
 let loading = $state(false);
 
+// focus input on mount without a11y warning
+function autofocus(node: HTMLElement) {
+  node.focus();
+}
+
 async function handle_submit(e: Event) {
   e.preventDefault();
   loading = true;
@@ -39,7 +44,7 @@ async function handle_submit(e: Event) {
         bind:value={password}
         placeholder="Enter password"
         disabled={loading}
-        autofocus
+        use:autofocus
       />
       <button type="submit" disabled={loading || !password}>
         {loading ? "Signing in..." : "Sign in"}

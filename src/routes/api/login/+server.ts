@@ -1,11 +1,16 @@
 import { json } from "@sveltejs/kit";
+import { dev } from "$app/environment";
 import { create_session_token, get_cookie_name, verify_password } from "$lib/server/auth";
 import type { RequestHandler } from "./$types";
 
 export const POST: RequestHandler = async ({ request, cookies }) => {
   const { password } = await request.json();
 
-  if (!password || !(await verify_password(password))) {
+  console.log("[login] password received:", !!password);
+  const valid = await verify_password(password);
+  console.log("[login] verify_password result:", valid);
+
+  if (!password || !valid) {
     return json({ error: "Invalid password" }, { status: 401 });
   }
 
@@ -14,7 +19,7 @@ export const POST: RequestHandler = async ({ request, cookies }) => {
     path: "/",
     httpOnly: true,
     sameSite: "lax",
-    secure: true,
+    secure: !dev,
     maxAge: 60 * 60 * 24 * 7, // 7 days
   });
 

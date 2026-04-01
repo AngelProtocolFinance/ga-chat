@@ -1,8 +1,8 @@
 import { analyticsdata_v1beta } from "@googleapis/analyticsdata";
 import { GoogleAuth } from "google-auth-library";
+import { GOOGLE_SERVICE_ACCOUNT_JSON, GA4_PROPERTY_ID } from "$env/static/private";
 
-const credentials = JSON.parse(process.env.GOOGLE_SERVICE_ACCOUNT_JSON ?? "{}");
-const property_id = process.env.GA4_PROPERTY_ID ?? "";
+const credentials = JSON.parse(GOOGLE_SERVICE_ACCOUNT_JSON || "{}");
 
 const auth = new GoogleAuth({
   credentials,
@@ -21,7 +21,7 @@ export async function run_report(params: {
   limit?: number;
 }) {
   const res = await client.properties.runReport({
-    property: `properties/${property_id}`,
+    property: `properties/${GA4_PROPERTY_ID}`,
     requestBody: {
       dimensions: params.dimensions,
       metrics: params.metrics,
@@ -46,7 +46,7 @@ export async function run_realtime_report(params: {
   limit?: number;
 }) {
   const res = await client.properties.runRealtimeReport({
-    property: `properties/${property_id}`,
+    property: `properties/${GA4_PROPERTY_ID}`,
     requestBody: {
       dimensions: params.dimensions,
       metrics: params.metrics,
@@ -60,7 +60,7 @@ export async function run_realtime_report(params: {
 
 export async function get_property_details() {
   const res = await client.properties.getMetadata({
-    name: `properties/${property_id}/metadata`,
+    name: `properties/${GA4_PROPERTY_ID}/metadata`,
   });
   return res.data;
 }

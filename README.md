@@ -22,7 +22,7 @@ Fill in:
 ### 2. Generate password hash
 
 ```bash
-node -e "import('bcryptjs').then(b => b.default.hash('YOUR_PASSWORD', 10).then(console.log))"
+pnpm exec node -e "const c=require('crypto');console.log(c.createHash('sha256').update('YOUR_PASSWORD').digest('hex'))"
 ```
 
 Paste the output as `AUTH_PASSWORD_HASH` in `.env`.
