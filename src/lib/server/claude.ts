@@ -1,8 +1,15 @@
 import Anthropic from "@anthropic-ai/sdk";
-import { ANTHROPIC_API_KEY } from "$env/static/private";
+import { env } from "$env/dynamic/private";
 import { execute_tool, tool_definitions } from "./tools.js";
 
-const anthropic = new Anthropic({ apiKey: ANTHROPIC_API_KEY });
+// lazy init — avoids build-time crash when env vars are absent
+let _anthropic: Anthropic;
+function get_anthropic() {
+  if (!_anthropic) {
+    _anthropic = new Anthropic({ apiKey: env.ANTHROPIC_API_KEY });
+  }
+  return _anthropic;
+}
 
 const SYSTEM_PROMPT = `You are a Google Analytics expert assistant for Better Giving (bettergiving.com). You help the marketing team understand their GA4 traffic data by querying the analytics API.
 
@@ -38,7 +45,7 @@ export async function* chat(messages: Anthropic.MessageParam[]): AsyncGenerator<
   while (iterations < max_iterations) {
     iterations++;
 
-    const response = await anthropic.messages.create({
+    const response = await get_anthropic().messages.create({
       model: "claude-sonnet-4-6",
       max_tokens: 4096,
       system: SYSTEM_PROMPT,
