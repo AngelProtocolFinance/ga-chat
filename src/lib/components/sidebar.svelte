@@ -1,5 +1,6 @@
 <script lang="ts">
 import type { Conversation } from "$lib/types";
+import { Plus, Trash2 } from "lucide-svelte";
 
 let {
 	conversations,
@@ -36,9 +37,7 @@ function handle_delete(e: Event, id: string) {
 
 <aside class="sidebar" class:open>
 	<button class="new-chat-btn" onclick={on_new}>
-		<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
-			<path d="M12 5v14M5 12h14" />
-		</svg>
+		<Plus size={14} />
 		New Chat
 	</button>
 
@@ -61,9 +60,7 @@ function handle_delete(e: Event, id: string) {
 						onclick={(e) => handle_delete(e, conv.id)}
 						aria-label="Delete conversation"
 					>
-						<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
-							<path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" />
-						</svg>
+						<Trash2 size={12} />
 					</button>
 				</span>
 			</div>

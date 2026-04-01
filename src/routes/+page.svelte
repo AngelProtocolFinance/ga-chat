@@ -4,6 +4,7 @@ import Sidebar from "$lib/components/sidebar.svelte";
 import { tick, onMount } from "svelte";
 import { marked } from "marked";
 import DOMPurify from "dompurify";
+import { Menu, Users, Globe, FileText, Activity, Download, Send, Settings, ChevronDown } from "lucide-svelte";
 
 marked.setOptions({ async: false });
 
@@ -17,8 +18,20 @@ let conversations = $state<Conversation[]>([]);
 let conversation_id = $state<string | null>(null);
 let sidebar_open = $state(false);
 
+let config_open = $state(false);
+let config: {
+	ga4_property_id: string | null;
+	anthropic_key: string | null;
+	service_account_email: string | null;
+	service_account_project: string | null;
+} | null = $state(null);
+
 onMount(() => {
 	load_conversations();
+	fetch("/api/config")
+		.then((r) => (r.ok ? r.json() : null))
+		.then((data) => (config = data))
+		.catch(() => {});
 });
 
 async function load_conversations() {
@@ -223,9 +236,7 @@ function render_markdown(text: string): string {
 <div class="chat-app" class:sidebar-open={sidebar_open}>
 	<header>
 		<button class="menu-btn" onclick={() => sidebar_open = !sidebar_open} aria-label="Toggle sidebar">
-			<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-				<path d="M3 12h18M3 6h18M3 18h18" />
-			</svg>
+			<Menu size={18} />
 		</button>
 		<h1>GA4 Chat</h1>
 		<span class="badge">GA4 Analytics</span>
@@ -245,22 +256,71 @@ function render_markdown(text: string): string {
 				</div>
 				<div class="suggestions">
 					<button onclick={() => { input = "How many visitors did we get last 7 days?"; }}>
-						<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+						<Users size={14} />
 						Visitors last 7 days
 					</button>
 					<button onclick={() => { input = "What are our top traffic sources this month?"; }}>
-						<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+						<Globe size={14} />
 						Top traffic sources
 					</button>
 					<button onclick={() => { input = "Show me the most popular pages this week"; }}>
-						<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+						<FileText size={14} />
 						Most popular pages
 					</button>
 					<button onclick={() => { input = "How many active users right now?"; }}>
-						<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+						<Activity size={14} />
 						Real-time active users
 					</button>
 				</div>
+
+				{#if config}
+					<div class="config-panel">
+						<button class="config-toggle" onclick={() => config_open = !config_open}>
+							<Settings size={14} />
+							Setup Status
+							<span class="config-chevron" class:config-chevron-open={config_open}>
+								<ChevronDown size={12} />
+							</span>
+						</button>
+						{#if config_open}
+							<div class="config-grid">
+								<div class="config-row">
+									<span class="config-label">GA4 Property</span>
+									<span class="config-value">
+										{#if config.ga4_property_id}
+											<span class="config-ok">&#10003;</span> {config.ga4_property_id}
+										{:else}
+											<span class="config-err">&#10007;</span> not set
+										{/if}
+									</span>
+								</div>
+								<div class="config-row">
+									<span class="config-label">Anthropic Key</span>
+									<span class="config-value">
+										{#if config.anthropic_key}
+											<span class="config-ok">&#10003;</span> {config.anthropic_key}
+										{:else}
+											<span class="config-err">&#10007;</span> not set
+										{/if}
+									</span>
+								</div>
+								<div class="config-row">
+									<span class="config-label">Service Account</span>
+									<span class="config-value">
+										{#if config.service_account_email}
+											<span class="config-ok">&#10003;</span> {config.service_account_email}
+											{#if config.service_account_project}
+												<span class="config-project">({config.service_account_project})</span>
+											{/if}
+										{:else}
+											<span class="config-err">&#10007;</span> not set
+										{/if}
+									</span>
+								</div>
+							</div>
+						{/if}
+					</div>
+				{/if}
 			</div>
 		{/if}
 
@@ -272,7 +332,7 @@ function render_markdown(text: string): string {
 						{@html render_markdown(strip_suggestions(msg.content))}
 						{#if has_table(msg.content)}
 							<button class="export-btn" onclick={() => export_csv(msg.content)}>
-								<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+								<Download size={12} />
 								Export CSV
 							</button>
 						{/if}
@@ -313,10 +373,7 @@ function render_markdown(text: string): string {
 			disabled={loading}
 		/>
 		<button type="submit" disabled={loading || !input.trim()}>
-			<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-				<line x1="22" y1="2" x2="11" y2="13" />
-				<polygon points="22 2 15 22 11 13 2 9 22 2" />
-			</svg>
+			<Send size={16} />
 			Send
 		</button>
 	</form>
@@ -486,6 +543,7 @@ function render_markdown(text: string): string {
 		display: flex;
 		flex-direction: column;
 		gap: 0.375rem;
+		min-width: 0;
 		animation: message-in var(--duration-normal) var(--ease-out) both;
 	}
 
@@ -510,6 +568,8 @@ function render_markdown(text: string): string {
 		font-size: var(--text-md);
 		line-height: 1.6;
 		color: var(--text-secondary);
+		overflow-x: auto;
+		min-width: 0;
 	}
 
 	.message.user .message-content {
@@ -678,6 +738,84 @@ function render_markdown(text: string): string {
 
 	.sidebar-overlay {
 		display: none;
+	}
+
+	/* config panel */
+	.config-panel {
+		max-width: 480px;
+		width: 100%;
+		opacity: 0;
+		animation: fade-up var(--duration-slow) var(--ease-out) 0.55s forwards;
+	}
+
+	.config-toggle {
+		display: flex;
+		align-items: center;
+		gap: 0.5rem;
+		background: none;
+		border: none;
+		color: var(--text-dim);
+		font-family: var(--font-body);
+		font-size: var(--text-xs);
+		cursor: pointer;
+		padding: 0.25rem 0;
+		transition: color var(--duration-fast);
+	}
+
+	.config-toggle:hover {
+		color: var(--text-secondary);
+	}
+
+	.config-chevron {
+		display: inline-flex;
+		transition: transform var(--duration-fast) var(--ease-out);
+	}
+
+	.config-chevron-open {
+		transform: rotate(180deg);
+	}
+
+	.config-grid {
+		background: var(--bg-surface);
+		border: 1px solid var(--border-subtle);
+		border-radius: var(--radius-md);
+		padding: 0.5rem 0.75rem;
+		margin-top: 0.375rem;
+		display: flex;
+		flex-direction: column;
+		gap: 0.375rem;
+	}
+
+	.config-row {
+		display: flex;
+		justify-content: space-between;
+		align-items: baseline;
+		gap: 1rem;
+		font-size: var(--text-xs);
+	}
+
+	.config-label {
+		color: var(--text-dim);
+		white-space: nowrap;
+	}
+
+	.config-value {
+		color: var(--text-secondary);
+		text-align: right;
+		word-break: break-all;
+	}
+
+	.config-ok {
+		color: #34d399;
+	}
+
+	.config-err {
+		color: #f87171;
+	}
+
+	.config-project {
+		color: var(--text-dim);
+		margin-left: 0.25rem;
 	}
 
 	@media (max-width: 768px) {
