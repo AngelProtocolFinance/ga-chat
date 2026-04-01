@@ -43,7 +43,7 @@ async function handle_submit(e: Event) {
       </svg>
       <h1>GA4 Chat</h1>
     </div>
-    <p class="subtitle">Analytics for Better Giving</p>
+    <p class="subtitle">GA4 Chat</p>
 
     <form onsubmit={handle_submit}>
       <input

@@ -1,6 +1,6 @@
 # GA4 Chat
 
-Chat interface for querying Better Giving GA4 data via Claude.
+Chat interface for querying GA4 analytics data via Claude.
 
 ## Setup
 

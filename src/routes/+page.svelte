@@ -228,7 +228,7 @@ function render_markdown(text: string): string {
 			</svg>
 		</button>
 		<h1>GA4 Chat</h1>
-		<span class="badge">Better Giving Analytics</span>
+		<span class="badge">GA4 Analytics</span>
 	</header>
 
 	<div class="messages" bind:this={messages_el}>

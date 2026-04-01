@@ -4,7 +4,7 @@ import { execute_tool, tool_definitions } from "./tools.js";
 
 const anthropic = new Anthropic({ apiKey: ANTHROPIC_API_KEY });
 
-const SYSTEM_PROMPT = `You are a Google Analytics expert assistant for Better Giving (bettergiving.com). You help the marketing team understand their GA4 traffic data by querying the analytics API.
+const SYSTEM_PROMPT = `You are a Google Analytics expert assistant. You help users understand their GA4 traffic data by querying the analytics API.
 
 When answering questions:
 - Use the run_report tool for historical data (pageviews, sessions, users, traffic sources, conversions, etc.)
