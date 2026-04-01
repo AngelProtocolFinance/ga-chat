@@ -35,7 +35,12 @@ function handle_delete(e: Event, id: string) {
 </script>
 
 <aside class="sidebar" class:open>
-	<button class="new-chat-btn" onclick={on_new}>+ New Chat</button>
+	<button class="new-chat-btn" onclick={on_new}>
+		<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+			<path d="M12 5v14M5 12h14" />
+		</svg>
+		New Chat
+	</button>
 
 	<div class="conversation-list">
 		{#each conversations as conv (conv.id)}
@@ -55,7 +60,11 @@ function handle_delete(e: Event, id: string) {
 						class="delete-btn"
 						onclick={(e) => handle_delete(e, conv.id)}
 						aria-label="Delete conversation"
-					>×</button>
+					>
+						<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+							<path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" />
+						</svg>
+					</button>
 				</span>
 			</div>
 		{/each}
@@ -67,27 +76,32 @@ function handle_delete(e: Event, id: string) {
 		width: 260px;
 		min-width: 260px;
 		height: 100vh;
-		border-right: 1px solid #1a1a1a;
+		border-right: 1px solid var(--border-subtle);
 		display: flex;
 		flex-direction: column;
-		background: #0a0a0a;
+		background: var(--bg-deep);
 	}
 
 	.new-chat-btn {
 		margin: 0.75rem;
 		padding: 0.5rem 0.75rem;
-		background: #141414;
-		border: 1px solid #262626;
-		border-radius: 8px;
-		color: #fafafa;
-		font-size: 0.8125rem;
+		background: var(--accent-dim);
+		border: 1px solid transparent;
+		border-radius: var(--radius-md);
+		color: var(--accent-hover);
+		font-family: var(--font-body);
+		font-size: var(--text-sm);
 		font-weight: 500;
 		cursor: pointer;
-		transition: background 0.15s;
+		transition: all var(--duration-fast) var(--ease-out);
+		display: flex;
+		align-items: center;
+		gap: 0.5rem;
 	}
 
 	.new-chat-btn:hover {
-		background: #1a1a1a;
+		background: var(--accent);
+		color: var(--text-primary);
 	}
 
 	.conversation-list {
@@ -107,21 +121,23 @@ function handle_delete(e: Event, id: string) {
 		border: none;
 		text-align: left;
 		cursor: pointer;
-		transition: background 0.15s;
-		color: #a3a3a3;
+		transition: background var(--duration-fast) var(--ease-out);
+		color: var(--text-secondary);
+		border-left: 2px solid transparent;
 	}
 
 	.conversation-item:hover {
-		background: #141414;
+		background: var(--bg-surface);
 	}
 
 	.conversation-item.active {
-		background: #1a1a1a;
-		color: #fafafa;
+		background: var(--bg-surface);
+		color: var(--text-primary);
+		border-left-color: var(--accent);
 	}
 
 	.conv-title {
-		font-size: 0.8125rem;
+		font-size: var(--text-sm);
 		line-height: 1.3;
 		overflow: hidden;
 		text-overflow: ellipsis;
@@ -135,20 +151,21 @@ function handle_delete(e: Event, id: string) {
 	}
 
 	.conv-time {
-		font-size: 0.6875rem;
-		color: #525252;
+		font-size: var(--text-xs);
+		color: var(--text-dim);
 	}
 
 	.delete-btn {
 		background: none;
 		border: none;
-		color: #525252;
-		font-size: 1rem;
+		color: var(--text-dim);
 		cursor: pointer;
-		padding: 0 0.25rem;
+		padding: 0.125rem;
 		line-height: 1;
 		opacity: 0;
-		transition: opacity 0.15s, color 0.15s;
+		transition: opacity var(--duration-fast), color var(--duration-fast);
+		display: flex;
+		align-items: center;
 	}
 
 	.conversation-item:hover .delete-btn {
@@ -156,7 +173,7 @@ function handle_delete(e: Event, id: string) {
 	}
 
 	.delete-btn:hover {
-		color: #ef4444;
+		color: var(--error);
 	}
 
 	/* mobile: hidden by default, shown via .open class */
@@ -167,7 +184,7 @@ function handle_delete(e: Event, id: string) {
 			top: 0;
 			z-index: 50;
 			transform: translateX(-100%);
-			transition: transform 0.2s ease;
+			transition: transform 0.2s var(--ease-out);
 		}
 
 		.sidebar.open {

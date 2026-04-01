@@ -234,32 +234,45 @@ function render_markdown(text: string): string {
 	<div class="messages" bind:this={messages_el}>
 		{#if messages.length === 0}
 			<div class="empty">
-				<p class="empty-title">Ask anything about your GA4 data</p>
+				<div class="empty-hero">
+					<svg class="empty-icon" width="48" height="48" viewBox="0 0 32 32" fill="none">
+						<rect x="6" y="18" width="5" height="8" rx="1.5" fill="var(--accent)" opacity="0.6"/>
+						<rect x="13.5" y="12" width="5" height="14" rx="1.5" fill="var(--accent)" opacity="0.8"/>
+						<rect x="21" y="6" width="5" height="20" rx="1.5" fill="var(--accent)"/>
+					</svg>
+					<p class="empty-title">Ask anything about your GA4 data</p>
+					<p class="empty-hint">Query visitors, traffic sources, page views, and more</p>
+				</div>
 				<div class="suggestions">
 					<button onclick={() => { input = "How many visitors did we get last 7 days?"; }}>
+						<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
 						Visitors last 7 days
 					</button>
 					<button onclick={() => { input = "What are our top traffic sources this month?"; }}>
+						<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
 						Top traffic sources
 					</button>
 					<button onclick={() => { input = "Show me the most popular pages this week"; }}>
+						<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
 						Most popular pages
 					</button>
 					<button onclick={() => { input = "How many active users right now?"; }}>
+						<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
 						Real-time active users
 					</button>
 				</div>
 			</div>
 		{/if}
 
-		{#each messages as msg}
-			<div class="message {msg.role}">
+		{#each messages as msg, i}
+			<div class="message {msg.role}" style="animation-delay: {Math.min(i * 0.05, 0.3)}s">
 				<div class="message-label">{msg.role === "user" ? "You" : "GA4 Assistant"}</div>
 				<div class="message-content">
 					{#if msg.role === "assistant"}
 						{@html render_markdown(strip_suggestions(msg.content))}
 						{#if has_table(msg.content)}
 							<button class="export-btn" onclick={() => export_csv(msg.content)}>
+								<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
 								Export CSV
 							</button>
 						{/if}
@@ -299,7 +312,13 @@ function render_markdown(text: string): string {
 			placeholder="Ask about your GA4 data..."
 			disabled={loading}
 		/>
-		<button type="submit" disabled={loading || !input.trim()}>Send</button>
+		<button type="submit" disabled={loading || !input.trim()}>
+			<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+				<line x1="22" y1="2" x2="11" y2="13" />
+				<polygon points="22 2 15 22 11 13 2 9 22 2" />
+			</svg>
+			Send
+		</button>
 	</form>
 </div>
 
@@ -317,33 +336,37 @@ function render_markdown(text: string): string {
 		align-items: center;
 		gap: 0.75rem;
 		padding: 1rem 1.5rem;
-		border-bottom: 1px solid #1a1a1a;
+		border-bottom: 1px solid var(--border-subtle);
+		background: var(--bg-deep);
 	}
 
 	header h1 {
-		font-size: 1.125rem;
+		font-family: var(--font-display);
+		font-size: var(--text-lg);
 		font-weight: 600;
+		letter-spacing: -0.01em;
 	}
 
 	.menu-btn {
 		display: none;
 		background: none;
 		border: none;
-		color: #a3a3a3;
+		color: var(--text-secondary);
 		cursor: pointer;
 		padding: 0.25rem;
 	}
 
 	.menu-btn:hover {
-		color: #fafafa;
+		color: var(--text-primary);
 	}
 
 	.badge {
-		font-size: 0.6875rem;
-		color: #a3a3a3;
-		background: #1a1a1a;
+		font-size: var(--text-xs);
+		color: var(--accent);
+		background: var(--accent-dim);
 		padding: 0.25rem 0.5rem;
-		border-radius: 4px;
+		border-radius: var(--radius-sm);
+		font-weight: 500;
 	}
 
 	.messages {
@@ -355,71 +378,142 @@ function render_markdown(text: string): string {
 		gap: 1.5rem;
 	}
 
+	/* empty state */
 	.empty {
 		display: flex;
 		flex-direction: column;
 		align-items: center;
 		justify-content: center;
 		flex: 1;
-		gap: 1.5rem;
+		gap: 2rem;
+	}
+
+	.empty-hero {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 0.75rem;
+	}
+
+	.empty-icon {
+		margin-bottom: 0.5rem;
+		opacity: 0;
+		animation: fade-up var(--duration-slow) var(--ease-out) 0.1s forwards;
 	}
 
 	.empty-title {
-		color: #737373;
-		font-size: 1.125rem;
+		color: var(--text-primary);
+		font-family: var(--font-display);
+		font-size: var(--text-2xl);
+		font-weight: 600;
+		letter-spacing: -0.02em;
+		opacity: 0;
+		animation: fade-up var(--duration-slow) var(--ease-out) 0.2s forwards;
+	}
+
+	.empty-hint {
+		color: var(--text-muted);
+		font-size: var(--text-base);
+		opacity: 0;
+		animation: fade-up var(--duration-slow) var(--ease-out) 0.3s forwards;
+	}
+
+	@keyframes fade-up {
+		from {
+			opacity: 0;
+			transform: translateY(10px);
+		}
+		to {
+			opacity: 1;
+			transform: translateY(0);
+		}
 	}
 
 	.suggestions {
-		display: flex;
-		flex-wrap: wrap;
+		display: grid;
+		grid-template-columns: repeat(2, 1fr);
 		gap: 0.5rem;
-		justify-content: center;
+		max-width: 480px;
+		width: 100%;
 	}
 
 	.follow-up-suggestions {
-		justify-content: flex-start;
+		display: flex;
+		flex-wrap: wrap;
+		max-width: none;
 		margin-top: 0.75rem;
 	}
 
 	.suggestions button {
-		background: #141414;
-		border: 1px solid #262626;
-		border-radius: 8px;
-		color: #a3a3a3;
-		padding: 0.5rem 0.875rem;
-		font-size: 0.8125rem;
+		background: var(--bg-surface);
+		border: 1px solid var(--border-subtle);
+		border-radius: var(--radius-md);
+		color: var(--text-secondary);
+		padding: 0.625rem 0.875rem;
+		font-family: var(--font-body);
+		font-size: var(--text-sm);
 		cursor: pointer;
-		transition: all 0.15s;
+		transition: all var(--duration-fast) var(--ease-out);
+		text-align: left;
+		display: flex;
+		align-items: center;
+		gap: 0.5rem;
 	}
 
 	.suggestions button:hover {
-		background: #1a1a1a;
-		border-color: #404040;
-		color: #fafafa;
+		background: var(--bg-elevated);
+		border-color: var(--border-default);
+		color: var(--text-primary);
+		transform: translateY(-1px);
 	}
 
+	.suggestions button:active {
+		transform: translateY(0);
+	}
+
+	/* stagger suggestion entrance */
+	.empty .suggestions button {
+		opacity: 0;
+		animation: fade-up var(--duration-slow) var(--ease-out) forwards;
+	}
+	.empty .suggestions button:nth-child(1) { animation-delay: 0.35s; }
+	.empty .suggestions button:nth-child(2) { animation-delay: 0.4s; }
+	.empty .suggestions button:nth-child(3) { animation-delay: 0.45s; }
+	.empty .suggestions button:nth-child(4) { animation-delay: 0.5s; }
+
+	/* messages */
 	.message {
 		display: flex;
 		flex-direction: column;
 		gap: 0.375rem;
+		animation: message-in var(--duration-normal) var(--ease-out) both;
+	}
+
+	.message.assistant {
+		padding-left: 0.75rem;
+		border-left: 2px solid var(--accent-dim);
 	}
 
 	.message-label {
-		font-size: 0.6875rem;
+		font-size: var(--text-xs);
 		font-weight: 500;
 		text-transform: uppercase;
 		letter-spacing: 0.05em;
-		color: #525252;
+		color: var(--text-dim);
+	}
+
+	.message.assistant .message-label {
+		color: var(--accent);
 	}
 
 	.message-content {
-		font-size: 0.9375rem;
+		font-size: var(--text-md);
 		line-height: 1.6;
-		color: #e5e5e5;
+		color: var(--text-secondary);
 	}
 
 	.message.user .message-content {
-		color: #fafafa;
+		color: var(--text-primary);
 	}
 
 	/* markdown content styling */
@@ -427,18 +521,18 @@ function render_markdown(text: string): string {
 		width: 100%;
 		border-collapse: collapse;
 		margin: 0.75rem 0;
-		font-size: 0.8125rem;
+		font-size: var(--text-sm);
 	}
 
 	.message-content :global(th),
 	.message-content :global(td) {
 		padding: 0.5rem 0.75rem;
 		text-align: left;
-		border-bottom: 1px solid #1a1a1a;
+		border-bottom: 1px solid var(--border-subtle);
 	}
 
 	.message-content :global(th) {
-		color: #a3a3a3;
+		color: var(--text-secondary);
 		font-weight: 500;
 		font-size: 0.75rem;
 		text-transform: uppercase;
@@ -446,45 +540,58 @@ function render_markdown(text: string): string {
 	}
 
 	.message-content :global(tr:hover td) {
-		background: #141414;
+		background: var(--bg-surface);
 	}
 
 	.message-content :global(pre) {
-		background: #141414;
-		border-radius: 6px;
+		background: var(--bg-surface);
+		border: 1px solid var(--border-subtle);
+		border-radius: var(--radius-sm);
 		padding: 0.75rem;
 		overflow-x: auto;
-		font-size: 0.8125rem;
+		font-family: var(--font-mono);
+		font-size: var(--text-sm);
+	}
+
+	.message-content :global(code) {
+		font-family: var(--font-mono);
+		font-size: 0.9em;
 	}
 
 	.message-content :global(strong) {
-		color: #fafafa;
+		color: var(--text-primary);
 	}
 
 	.message-content :global(h2),
 	.message-content :global(h3),
 	.message-content :global(h4) {
 		margin-top: 0.75rem;
-		color: #fafafa;
+		color: var(--text-primary);
+		font-family: var(--font-display);
 	}
 
 	.export-btn {
-		background: #141414;
-		border: 1px solid #262626;
-		border-radius: 6px;
-		color: #a3a3a3;
+		background: var(--bg-surface);
+		border: 1px solid var(--border-subtle);
+		border-radius: var(--radius-sm);
+		color: var(--text-secondary);
 		padding: 0.375rem 0.75rem;
+		font-family: var(--font-body);
 		font-size: 0.75rem;
 		cursor: pointer;
 		margin-top: 0.5rem;
-		transition: all 0.15s;
+		transition: all var(--duration-fast);
+		display: inline-flex;
+		align-items: center;
+		gap: 0.375rem;
 	}
 
 	.export-btn:hover {
-		background: #1a1a1a;
-		color: #fafafa;
+		background: var(--bg-elevated);
+		color: var(--text-primary);
 	}
 
+	/* loading dots */
 	.loading-indicator {
 		display: flex;
 		align-items: center;
@@ -494,7 +601,7 @@ function render_markdown(text: string): string {
 	.dot {
 		width: 6px;
 		height: 6px;
-		background: #525252;
+		background: var(--accent);
 		border-radius: 50%;
 		animation: pulse 1.4s ease-in-out infinite;
 	}
@@ -508,44 +615,52 @@ function render_markdown(text: string): string {
 	}
 
 	.status-text {
-		color: #525252;
-		font-size: 0.8125rem;
+		color: var(--text-dim);
+		font-size: var(--text-sm);
 		margin-left: 0.5rem;
 	}
 
+	/* input area */
 	.input-area {
 		display: flex;
 		gap: 0.5rem;
 		padding: 1rem 1.5rem;
-		border-top: 1px solid #1a1a1a;
+		border-top: 1px solid var(--border-subtle);
+		background: var(--bg-deep);
 	}
 
 	.input-area input {
 		flex: 1;
-		background: #141414;
-		border: 1px solid #262626;
-		border-radius: 8px;
-		color: #fafafa;
+		background: var(--bg-surface);
+		border: 1px solid var(--border-subtle);
+		border-radius: var(--radius-md);
+		color: var(--text-primary);
 		padding: 0.625rem 0.875rem;
-		font-size: 0.875rem;
+		font-family: var(--font-body);
+		font-size: var(--text-base);
 		outline: none;
-		transition: border-color 0.15s;
+		transition: border-color var(--duration-fast), box-shadow var(--duration-fast);
 	}
 
 	.input-area input:focus {
-		border-color: #525252;
+		border-color: var(--accent);
+		box-shadow: 0 0 0 3px var(--accent-glow);
 	}
 
 	.input-area button {
-		background: #fafafa;
-		color: #0a0a0a;
+		background: var(--accent);
+		color: var(--bg-deepest);
 		border: none;
-		border-radius: 8px;
+		border-radius: var(--radius-md);
 		padding: 0.625rem 1.25rem;
-		font-size: 0.875rem;
-		font-weight: 500;
+		font-family: var(--font-body);
+		font-size: var(--text-base);
+		font-weight: 600;
 		cursor: pointer;
-		transition: opacity 0.15s;
+		transition: background var(--duration-fast), transform var(--duration-fast);
+		display: flex;
+		align-items: center;
+		gap: 0.5rem;
 	}
 
 	.input-area button:disabled {
@@ -554,7 +669,11 @@ function render_markdown(text: string): string {
 	}
 
 	.input-area button:hover:not(:disabled) {
-		opacity: 0.9;
+		background: var(--accent-hover);
+	}
+
+	.input-area button:active:not(:disabled) {
+		transform: scale(0.97);
 	}
 
 	.sidebar-overlay {
@@ -574,6 +693,10 @@ function render_markdown(text: string): string {
 			z-index: 40;
 			border: none;
 			cursor: default;
+		}
+
+		.suggestions {
+			grid-template-columns: 1fr;
 		}
 	}
 </style>

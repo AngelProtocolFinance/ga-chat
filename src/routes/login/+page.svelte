@@ -35,7 +35,14 @@ async function handle_submit(e: Event) {
 
 <div class="login-page">
   <div class="login-card">
-    <h1>GA4 Chat</h1>
+    <div class="brand">
+      <svg class="brand-icon" width="32" height="32" viewBox="0 0 32 32" fill="none">
+        <rect x="6" y="18" width="5" height="8" rx="1.5" fill="var(--accent)"/>
+        <rect x="13.5" y="12" width="5" height="14" rx="1.5" fill="var(--accent-hover)"/>
+        <rect x="21" y="6" width="5" height="20" rx="1.5" fill="#7dd3fc"/>
+      </svg>
+      <h1>GA4 Chat</h1>
+    </div>
     <p class="subtitle">Analytics for Better Giving</p>
 
     <form onsubmit={handle_submit}>
@@ -62,28 +69,60 @@ async function handle_submit(e: Event) {
     display: flex;
     align-items: center;
     justify-content: center;
-    background: #0a0a0a;
-    font-family: system-ui, -apple-system, sans-serif;
+    background:
+      radial-gradient(ellipse 80% 60% at 50% 120%, var(--accent-glow-strong), transparent),
+      radial-gradient(ellipse 60% 50% at 80% 0%, rgba(14, 165, 233, 0.06), transparent),
+      var(--bg-deepest);
+    width: 100%;
   }
 
   .login-card {
-    background: #141414;
-    border: 1px solid #262626;
-    border-radius: 12px;
+    background: var(--bg-deep);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-xl);
     padding: 2.5rem;
     width: 100%;
     max-width: 380px;
+    box-shadow:
+      0 0 0 1px var(--border-subtle),
+      0 8px 40px rgba(0, 0, 0, 0.4),
+      0 0 80px var(--accent-glow);
+    animation: card-in var(--duration-slow) var(--ease-out);
+  }
+
+  @keyframes card-in {
+    from {
+      opacity: 0;
+      transform: translateY(12px) scale(0.98);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.25rem;
+  }
+
+  .brand-icon {
+    flex-shrink: 0;
   }
 
   h1 {
-    color: #fafafa;
-    font-size: 1.5rem;
-    margin: 0 0 0.25rem;
+    color: var(--text-primary);
+    font-family: var(--font-display);
+    font-size: var(--text-xl);
+    font-weight: 700;
+    letter-spacing: -0.02em;
   }
 
   .subtitle {
-    color: #737373;
-    font-size: 0.875rem;
+    color: var(--text-muted);
+    font-size: var(--text-base);
     margin: 0 0 1.5rem;
   }
 
@@ -94,30 +133,33 @@ async function handle_submit(e: Event) {
   }
 
   input {
-    background: #0a0a0a;
-    border: 1px solid #262626;
-    border-radius: 8px;
-    color: #fafafa;
+    background: var(--bg-deepest);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-md);
+    color: var(--text-primary);
     padding: 0.625rem 0.875rem;
-    font-size: 0.875rem;
+    font-family: var(--font-body);
+    font-size: var(--text-base);
     outline: none;
-    transition: border-color 0.15s;
+    transition: border-color var(--duration-fast), box-shadow var(--duration-fast);
   }
 
   input:focus {
-    border-color: #525252;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-glow);
   }
 
   button {
-    background: #fafafa;
-    color: #0a0a0a;
+    background: var(--accent);
+    color: var(--bg-deepest);
     border: none;
-    border-radius: 8px;
+    border-radius: var(--radius-md);
     padding: 0.625rem;
-    font-size: 0.875rem;
-    font-weight: 500;
+    font-family: var(--font-body);
+    font-size: var(--text-base);
+    font-weight: 600;
     cursor: pointer;
-    transition: opacity 0.15s;
+    transition: background var(--duration-fast), transform var(--duration-fast);
   }
 
   button:disabled {
@@ -126,12 +168,16 @@ async function handle_submit(e: Event) {
   }
 
   button:hover:not(:disabled) {
-    opacity: 0.9;
+    background: var(--accent-hover);
+  }
+
+  button:active:not(:disabled) {
+    transform: scale(0.98);
   }
 
   .error {
-    color: #ef4444;
-    font-size: 0.8125rem;
+    color: var(--error);
+    font-size: var(--text-sm);
     margin: 0;
     text-align: center;
   }

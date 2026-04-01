@@ -1,3 +1,54 @@
+:root {
+  /* palette — zinc-tinted grays */
+  --bg-deepest: #09090b;
+  --bg-deep: #111114;
+  --bg-surface: #18181b;
+  --bg-elevated: #27272a;
+  --bg-hover: #2a2a2e;
+
+  --border-subtle: #27272a;
+  --border-default: #3f3f46;
+  --border-focus: #52525b;
+
+  --text-primary: #fafafa;
+  --text-secondary: #a1a1aa;
+  --text-muted: #71717a;
+  --text-dim: #52525b;
+
+  --accent: #0ea5e9;
+  --accent-hover: #38bdf8;
+  --accent-dim: #0c4a6e;
+  --accent-glow: rgba(14, 165, 233, 0.12);
+  --accent-glow-strong: rgba(14, 165, 233, 0.25);
+
+  --error: #ef4444;
+
+  /* radii */
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+
+  /* typography */
+  --font-display: "Outfit", system-ui, sans-serif;
+  --font-body: "Inter", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+
+  --text-xs: 0.6875rem;
+  --text-sm: 0.8125rem;
+  --text-base: 0.875rem;
+  --text-md: 0.9375rem;
+  --text-lg: 1.125rem;
+  --text-xl: 1.5rem;
+  --text-2xl: 2rem;
+
+  /* transitions */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --duration-fast: 0.15s;
+  --duration-normal: 0.25s;
+  --duration-slow: 0.4s;
+}
+
 *,
 *::before,
 *::after {
@@ -7,8 +58,20 @@
 }
 
 body {
-  background: #0a0a0a;
-  color: #fafafa;
-  font-family: system-ui, -apple-system, sans-serif;
+  background: var(--bg-deepest);
+  color: var(--text-primary);
+  font-family: var(--font-body);
   -webkit-font-smoothing: antialiased;
+}
+
+/* message entrance animation */
+@keyframes message-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
