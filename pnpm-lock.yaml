@@ -30,7 +30,7 @@ importers:
         specifier: 6.2.2
         version: 6.2.2
       lucide-svelte:
-        specifier: ^1.0.1
+        specifier: 1.0.1
         version: 1.0.1(svelte@5.55.1)
       marked:
         specifier: 15.0.0
