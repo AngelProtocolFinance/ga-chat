@@ -1,24 +1,15 @@
 import { analyticsdata_v1beta } from "@googleapis/analyticsdata";
 import { GoogleAuth } from "google-auth-library";
-import { env } from "$env/dynamic/private";
+import { GA4_PROPERTY_ID, GOOGLE_SERVICE_ACCOUNT_JSON } from "$env/static/private";
 
-// lazy init — avoids build-time crash when env vars are absent
-let _client: analyticsdata_v1beta.Analyticsdata;
-function get_client() {
-  if (!_client) {
-    const credentials = JSON.parse(env.GOOGLE_SERVICE_ACCOUNT_JSON || "{}");
-    const auth = new GoogleAuth({
-      credentials,
-      scopes: ["https://www.googleapis.com/auth/analytics.readonly"],
-    });
-    _client = new analyticsdata_v1beta.Analyticsdata({ auth });
-  }
-  return _client;
-}
+const credentials = JSON.parse(GOOGLE_SERVICE_ACCOUNT_JSON || "{}");
 
-function get_property() {
-  return `properties/${env.GA4_PROPERTY_ID}`;
-}
+const auth = new GoogleAuth({
+  credentials,
+  scopes: ["https://www.googleapis.com/auth/analytics.readonly"],
+});
+
+const client = new analyticsdata_v1beta.Analyticsdata({ auth });
 
 export async function run_report(params: {
   dimensions?: { name: string }[];
@@ -29,8 +20,8 @@ export async function run_report(params: {
   order_bys?: Record<string, unknown>[];
   limit?: number;
 }) {
-  const res = await get_client().properties.runReport({
-    property: get_property(),
+  const res = await client.properties.runReport({
+    property: `properties/${GA4_PROPERTY_ID}`,
     requestBody: {
       dimensions: params.dimensions,
       metrics: params.metrics,
@@ -54,8 +45,8 @@ export async function run_realtime_report(params: {
   metric_filter?: Record<string, unknown>;
   limit?: number;
 }) {
-  const res = await get_client().properties.runRealtimeReport({
-    property: get_property(),
+  const res = await client.properties.runRealtimeReport({
+    property: `properties/${GA4_PROPERTY_ID}`,
     requestBody: {
       dimensions: params.dimensions,
       metrics: params.metrics,
@@ -68,8 +59,8 @@ export async function run_realtime_report(params: {
 }
 
 export async function get_property_details() {
-  const res = await get_client().properties.getMetadata({
-    name: `${get_property()}/metadata`,
+  const res = await client.properties.getMetadata({
+    name: `properties/${GA4_PROPERTY_ID}/metadata`,
   });
   return res.data;
 }
