@@ -20,7 +20,7 @@ export const POST: RequestHandler = async ({ params, request }) => {
   // bump updated_at
   await get_db()
     .update(conversations)
-    .set({ updated_at: sql`now()` })
+    .set({ updated_at: sql`datetime('now')` })
     .where(eq(conversations.id, params.id));
 
   return json({ ok: true });

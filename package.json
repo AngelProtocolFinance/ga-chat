@@ -18,7 +18,7 @@
   "dependencies": {
     "@anthropic-ai/sdk": "0.39.0",
     "@googleapis/analyticsdata": "5.0.1",
-    "@neondatabase/serverless": "1.0.2",
+    "@libsql/client": "0.17.2",
     "dompurify": "3.3.3",
     "drizzle-orm": "0.45.2",
     "google-auth-library": "10.6.2",
@@ -28,7 +28,7 @@
   "devDependencies": {
     "@biomejs/biome": "2.4.10",
     "@playwright/test": "1.59.0",
-    "@sveltejs/adapter-vercel": "6.3.3",
+    "@sveltejs/adapter-auto": "7.0.1",
     "@sveltejs/kit": "2.55.0",
     "@sveltejs/vite-plugin-svelte": "5.1.1",
     "drizzle-kit": "0.31.10",
