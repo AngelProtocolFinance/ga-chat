@@ -21,9 +21,17 @@ function markdown_table_to_csv(markdown: string): string {
       .split("|")
       .filter((c) => c.trim() !== "")
       .map((c) => {
-        const val = c.trim();
-        // quote values containing commas
-        return val.includes(",") ? `"${val}"` : val;
+        let val = c.trim();
+        // escape double quotes
+        val = val.replaceAll('"', '""');
+        // prevent formula injection in spreadsheet apps
+        if (/^[=+\-@\t\r]/.test(val)) {
+          val = `'${val}`;
+        }
+        // quote values containing commas, quotes, or newlines
+        return val.includes(",") || val.includes('"') || val.includes("\n")
+          ? `"${val}"`
+          : val;
       });
 
     csv_rows.push(cells.join(","));

@@ -1,6 +1,10 @@
 <script lang="ts">
 import type { ChatMessage } from "$lib/types";
 import { tick } from "svelte";
+import { marked } from "marked";
+import DOMPurify from "dompurify";
+
+marked.setOptions({ async: false });
 
 let messages = $state<ChatMessage[]>([]);
 let input = $state("");
@@ -40,6 +44,10 @@ async function send_message(e: Event) {
     let assistant_text = "";
     let buffer = "";
 
+    // pre-allocate assistant message at known index
+    const assistant_idx = messages.length;
+    messages = [...messages, { role: "assistant", content: "" }];
+
     while (true) {
       const { done, value } = await reader.read();
       if (done) break;
@@ -54,15 +62,9 @@ async function send_message(e: Event) {
 
         if (event.type === "text") {
           assistant_text += event.content;
-          // update message in place
-          messages = [
-            ...messages.filter(
-              (m) => m !== messages[messages.length - 1] || m.role === "user"
-            ),
-            ...(assistant_text
-              ? [{ role: "assistant" as const, content: assistant_text }]
-              : []),
-          ];
+          // update content via index assignment
+          messages[assistant_idx] = { role: "assistant", content: assistant_text };
+          messages = messages;
           await scroll_to_bottom();
         } else if (event.type === "tool_call") {
           status = event.content;
@@ -74,18 +76,9 @@ async function send_message(e: Event) {
       }
     }
 
-    if (assistant_text) {
-      // ensure final message is set
-      const without_assistant = messages.filter(
-        (_, i) =>
-          i < messages.length - 1 ||
-          messages[messages.length - 1].role === "user"
-      );
-      messages = [
-        ...without_assistant,
-        { role: "assistant", content: assistant_text },
-      ];
-    }
+    // finalize assistant message
+    messages[assistant_idx] = { role: "assistant", content: assistant_text };
+    messages = messages;
   } catch (err) {
     messages = [
       ...messages,
@@ -117,50 +110,9 @@ async function export_csv(content: string) {
   URL.revokeObjectURL(url);
 }
 
-// simple markdown rendering
 function render_markdown(text: string): string {
-  return (
-    text
-      // code blocks
-      .replace(/```(\w*)\n([\s\S]*?)```/g, "<pre><code>$2</code></pre>")
-      // bold
-      .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
-      // italic
-      .replace(/\*(.+?)\*/g, "<em>$1</em>")
-      // headers
-      .replace(/^### (.+)$/gm, "<h4>$1</h4>")
-      .replace(/^## (.+)$/gm, "<h3>$1</h3>")
-      .replace(/^# (.+)$/gm, "<h2>$1</h2>")
-      // tables
-      .replace(/^(\|.+\|)$/gm, (match) => {
-        if (/^\|[\s\-:|]+\|$/.test(match)) return ""; // skip separator
-        const cells = match.split("|").filter((c) => c.trim() !== "");
-        const tds = cells.map((c) => `<td>${c.trim()}</td>`).join("");
-        return `<tr>${tds}</tr>`;
-      })
-      .replace(/(<tr>[\s\S]*?<\/tr>)/g, (match, _, offset, str) => {
-        // wrap consecutive rows in a table
-        if (offset === 0 || str[offset - 1] !== ">") {
-          // find all consecutive rows
-          const rest = str.slice(offset);
-          const rows_match = rest.match(/^(<tr>[\s\S]*?<\/tr>\s*)+/);
-          if (rows_match) {
-            const rows = rows_match[0];
-            const first_row = rows.match(/<tr>(.*?)<\/tr>/);
-            if (first_row) {
-              const header = first_row[0]
-                .replace(/<td>/g, "<th>")
-                .replace(/<\/td>/g, "</th>");
-              const body = rows.replace(first_row[0], "").trim();
-              return `<table><thead>${header}</thead><tbody>${body}</tbody></table>`;
-            }
-          }
-        }
-        return match;
-      })
-      // line breaks
-      .replace(/\n/g, "<br>")
-  );
+  const html = marked.parse(text) as string;
+  return DOMPurify.sanitize(html);
 }
 </script>
 

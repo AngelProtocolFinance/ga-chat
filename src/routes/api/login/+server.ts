@@ -2,7 +2,7 @@ import { json } from "@sveltejs/kit";
 import type { RequestHandler } from "./$types";
 import {
   verify_password,
-  create_session,
+  create_session_token,
   get_cookie_name,
 } from "$lib/server/auth";
 
@@ -13,7 +13,7 @@ export const POST: RequestHandler = async ({ request, cookies }) => {
     return json({ error: "Invalid password" }, { status: 401 });
   }
 
-  const token = create_session();
+  const token = await create_session_token();
   cookies.set(get_cookie_name(), token, {
     path: "/",
     httpOnly: true,

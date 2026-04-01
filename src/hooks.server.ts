@@ -12,7 +12,7 @@ export const handle: Handle = async ({ event, resolve }) => {
   }
 
   const token = event.cookies.get(get_cookie_name());
-  if (!validate_session(token)) {
+  if (!(await validate_session(token))) {
     throw redirect(303, "/login");
   }
 

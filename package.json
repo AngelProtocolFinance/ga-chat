@@ -12,7 +12,9 @@
     "@anthropic-ai/sdk": "^0.39.0",
     "@googleapis/analyticsdata": "^5.0.0",
     "bcryptjs": "^2.4.3",
+    "dompurify": "^3.3.3",
     "google-auth-library": "^9.15.1",
+    "jose": "^6.2.2",
     "marked": "^15.0.0"
   },
   "devDependencies": {
