@@ -1,6 +1,6 @@
 import { analyticsdata_v1beta } from "@googleapis/analyticsdata";
 import { GoogleAuth } from "google-auth-library";
-import { GOOGLE_SERVICE_ACCOUNT_JSON, GA4_PROPERTY_ID } from "$env/static/private";
+import { GA4_PROPERTY_ID, GOOGLE_SERVICE_ACCOUNT_JSON } from "$env/static/private";
 
 const credentials = JSON.parse(GOOGLE_SERVICE_ACCOUNT_JSON || "{}");
 

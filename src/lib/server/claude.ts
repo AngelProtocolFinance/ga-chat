@@ -15,7 +15,14 @@ When answering questions:
 - Be concise but insightful — highlight notable trends or anomalies
 - Default to the last 7 days if no date range is specified
 - Common GA4 dimensions: date, pagePath, pageTitle, sessionSource, sessionMedium, country, city, deviceCategory, browser
-- Common GA4 metrics: activeUsers, sessions, screenPageViews, bounceRate, averageSessionDuration, conversions, totalRevenue`;
+- Common GA4 metrics: activeUsers, sessions, screenPageViews, bounceRate, averageSessionDuration, conversions, totalRevenue
+- When your response invites follow-up, end with a <suggestions> block (2-4 short prompts, one per line):
+
+<suggestions>
+Where did the traffic come from?
+Which pages were most visited?
+How does this compare to last week?
+</suggestions>`;
 
 export interface StreamEvent {
   type: "text" | "tool_call" | "tool_result" | "done" | "error";

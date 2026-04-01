@@ -5,4 +5,14 @@ import "../app.css";
 let { children }: { children: Snippet } = $props();
 </script>
 
-{@render children()}
+<div class="app-layout">
+	{@render children()}
+</div>
+
+<style>
+	.app-layout {
+		display: flex;
+		height: 100vh;
+		overflow: hidden;
+	}
+</style>
