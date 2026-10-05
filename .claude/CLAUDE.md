@@ -1,4 +1,4 @@
-<!-- kru v0.144.0 · derived 2026-10-05 · /kru:setup to re-derive -->
+<!-- kru v0.144.0 · derived 2026-10-06 · /kru:setup to re-derive -->
 ## Team
 
 Load **`kru:lead`** before building, reviewing, or dispatching a seat — it carries how the
@@ -14,7 +14,7 @@ team works.
 - **tokens** — `src/app.css` `:root` custom properties; nothing gates their use
 - **screens** — `pnpm dev`, `localhost:5173` (`server.strictPort`)
 - ⚠ **test** — no suite: `@playwright/test` is installed with no config or specs ← `find` for `*.spec.*`/`playwright.config*`
-- ⚠ **verify** — `pnpm lint` and `svelte-check --threshold error`; `svelte-check` is not installed, so the PostToolUse hook in `.claude/settings.json` reports nothing ← `node_modules/.bin`
+- **verify** — `pnpm lint && pnpm exec svelte-check --threshold error`, also run by `.claude/skills/verify` before each commit; svelte-check alone covers `.svelte` (Biome `files.includes` is ts/js only) ← `biome.json`, `package.json`
 - **mcp** — svelte · vercel (project plugins), turso (local plugin); context7 + chrome-devtools at user scope
 
 A slice reaching a stack no seat above covers is a question for the user, naming the seat it would
