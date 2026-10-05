@@ -47,7 +47,7 @@ Paste the output (a `scrypt:...` string) as `AUTH_PASSWORD_HASH` in `.env`. The 
 
 ### 4. Database
 
-The app uses SQLite by default (local `sqlite.db` file). Create its tables once with `pnpm db:push` (with `TURSO_DATABASE_URL` unset).
+The app uses SQLite by default (local `sqlite.db` file) whenever `TURSO_DATABASE_URL` is empty or absent. Create its tables once with `pnpm db:push`. `drizzle-kit` and `vite dev` both read `.env`, so if it sets `TURSO_DATABASE_URL`, blank it for the command: `TURSO_DATABASE_URL= pnpm db:push`, `TURSO_DATABASE_URL= pnpm dev`.
 
 For production/Vercel, use [Turso](https://turso.tech):
 
