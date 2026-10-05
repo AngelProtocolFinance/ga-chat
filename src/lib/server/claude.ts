@@ -31,28 +31,43 @@ export interface StreamEvent {
 
 export async function* chat(messages: Anthropic.MessageParam[]): AsyncGenerator<StreamEvent> {
   // working copy of messages for tool use loop
-  const working_messages = [...messages];
+  const working_messages: Anthropic.Beta.BetaMessageParam[] = [...messages];
   let iterations = 0;
   const max_iterations = 10;
 
   while (iterations < max_iterations) {
     iterations++;
 
-    const response = await anthropic.messages.create({
-      model: "claude-sonnet-4-6",
+    const response = await anthropic.beta.messages.create({
+      model: "claude-sonnet-5-5",
       max_tokens: 4096,
+      // lowest thinking setting; `disabled` is a 400 on this model, and between_tools 400s above effort high
+      thinking: { type: "between_tools" },
+      output_config: { effort: "high" },
+      // re-runs cyber/frontier_llm declines on another model inside the same call
+      betas: ["server-side-fallback-2026-07-01"],
+      fallbacks: "default",
       system: SYSTEM_PROMPT,
       tools: tool_definitions,
       messages: working_messages,
     });
 
+    if (response.stop_reason === "refusal") {
+      const category = response.stop_details?.category ?? "unspecified";
+      yield { type: "error", content: `Request declined (${category})` };
+      return;
+    }
+
     // collect text and tool_use blocks
     let has_tool_use = false;
-    const tool_results: Anthropic.ToolResultBlockParam[] = [];
+    const tool_results: Anthropic.Beta.BetaToolResultBlockParam[] = [];
 
     for (const block of response.content) {
       if (block.type === "text") {
         yield { type: "text", content: block.text };
+      } else if (block.type === "thinking" && block.thinking) {
+        // between_tools returns the model's between-tool-call notes here instead of as text blocks
+        yield { type: "text", content: block.thinking };
       } else if (block.type === "tool_use") {
         has_tool_use = true;
         yield {
