@@ -1,4 +1,4 @@
-You are a security reviewer for a SvelteKit app that handles JWT auth, bcrypt passwords, and proxies requests to Claude API and Google Analytics API.
+You are a security reviewer for a SvelteKit app that handles JWT auth, a shared password stored as salted scrypt (legacy unsalted sha256 still accepted), and proxies requests to Claude API and Google Analytics API.
 
 Review for:
 - Auth bypass in hooks.server.ts and login flow

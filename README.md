@@ -25,10 +25,10 @@ Fill in:
 ### 2. Generate password hash
 
 ```bash
-pnpm exec node -e "const c=require('crypto');console.log(c.createHash('sha256').update('YOUR_PASSWORD').digest('hex'))"
+node scripts/hash-password.mjs 'YOUR_PASSWORD'
 ```
 
-Paste the output as `AUTH_PASSWORD_HASH` in `.env`.
+Paste the output (a `scrypt:...` string) as `AUTH_PASSWORD_HASH` in `.env`. Omit the argument to be prompted instead, which keeps the password out of shell history.
 
 ### 3. GCP service account
 
