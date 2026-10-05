@@ -1,6 +1,15 @@
 # GA4 Chat
 
-Chat interface for querying GA4 analytics data via Claude.
+Ask your Google Analytics questions in plain English. Self-hosted, open source, built for nonprofit teams without an analyst.
+
+<!-- demo: replace with a gif/screenshot of a real question → answer -->
+![GA4 Chat demo](static/demo.gif)
+
+- **Plain-English answers** — "which campaigns drove donations last month?" → Claude queries your GA4 property and answers with tables and follow-up suggestions.
+- **Built for the whole team** — one shared login, saved conversations, CSV export. No per-seat AI subscription; you pay only for the Anthropic API calls you make.
+- **Yours to keep** — runs on your own Vercel or Replit account with your own keys. Read-only access to Analytics. MIT licensed.
+
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/ap-justin/ga4-chat&env=ANTHROPIC_API_KEY,GOOGLE_SERVICE_ACCOUNT_JSON,GA4_PROPERTY_ID,AUTH_PASSWORD_HASH,JWT_SECRET,TURSO_DATABASE_URL,TURSO_AUTH_TOKEN)
 
 ## Setup
 
@@ -16,7 +25,7 @@ Fill in:
 |-----|----------------|
 | `ANTHROPIC_API_KEY` | [console.anthropic.com/settings/keys](https://console.anthropic.com/settings/keys) |
 | `GOOGLE_SERVICE_ACCOUNT_JSON` | GCP Console → IAM → Service Accounts → Keys → JSON (needs `Analytics Viewer` role) |
-| `GA4_PROPERTY_ID` | GA4 Admin → Property Settings → Property ID (currently `354444619`) |
+| `GA4_PROPERTY_ID` | GA4 Admin → Property Settings → Property ID (a number like `123456789`) |
 | `AUTH_PASSWORD_HASH` | Generate with step 2 below |
 | `JWT_SECRET` | `openssl rand -hex 32` |
 | `TURSO_DATABASE_URL` | *(optional)* Turso database URL — omit to use local SQLite file |
@@ -38,7 +47,7 @@ Paste the output (a `scrypt:...` string) as `AUTH_PASSWORD_HASH` in `.env`. The 
 
 ### 4. Database
 
-The app uses SQLite by default (local `sqlite.db` file, no setup needed).
+The app uses SQLite by default (local `sqlite.db` file). Create its tables once with `pnpm db:push` (with `TURSO_DATABASE_URL` unset).
 
 For production/Vercel, use [Turso](https://turso.tech):
 
@@ -85,3 +94,14 @@ Open [localhost:5173](http://localhost:5173), log in with your password.
 1. Import repo from GitHub
 2. Set all env vars in Secrets (same as above, but `TURSO_DATABASE_URL` and `TURSO_AUTH_TOKEN` are optional — omit to use local SQLite)
 3. Hit **Run** — dev server starts on port 3000
+
+## Security notes
+
+- Login is one shared password, stored as a salted scrypt hash. After 5 wrong tries an IP address is locked out for 15 minutes.
+- The lockout counter lives in memory per server instance. Behind your own reverse proxy (e.g. `adapter-node`), configure the adapter's `ADDRESS_HEADER`/`XFF_DEPTH` so it sees real client IPs.
+- Sessions last 7 days. To sign everyone out, change `JWT_SECRET`.
+- **Upgrading from an older version:** an old 64-character sha256 `AUTH_PASSWORD_HASH` still works but logs a warning — regenerate it with step 2.
+
+## License
+
+[MIT](LICENSE)
