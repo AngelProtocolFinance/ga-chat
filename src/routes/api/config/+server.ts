@@ -1,9 +1,4 @@
-import { json } from "@sveltejs/kit";
-import {
-  ANTHROPIC_API_KEY,
-  GA4_PROPERTY_ID,
-  GOOGLE_SERVICE_ACCOUNT_JSON,
-} from "$env/static/private";
+import { ANTHROPIC_API_KEY, GA4_PROPERTY_ID, GOOGLE_SERVICE_ACCOUNT_JSON } from "$app/env/private";
 import type { RequestHandler } from "./$types";
 
 function mask_key(key: string | undefined): string | null {
@@ -31,7 +26,7 @@ function parse_service_account(raw: string | undefined): {
 export const GET: RequestHandler = async () => {
   const sa = parse_service_account(GOOGLE_SERVICE_ACCOUNT_JSON);
 
-  return json({
+  return Response.json({
     ga4_property_id: GA4_PROPERTY_ID || null,
     anthropic_key: mask_key(ANTHROPIC_API_KEY),
     service_account_email: sa.email,

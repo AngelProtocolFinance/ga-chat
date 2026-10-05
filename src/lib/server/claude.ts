@@ -1,5 +1,5 @@
 import Anthropic from "@anthropic-ai/sdk";
-import { ANTHROPIC_API_KEY } from "$env/static/private";
+import { ANTHROPIC_API_KEY } from "$app/env/private";
 import { execute_tool, tool_definitions } from "./tools.js";
 
 const anthropic = new Anthropic({ apiKey: ANTHROPIC_API_KEY });

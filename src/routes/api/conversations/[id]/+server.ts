@@ -1,7 +1,6 @@
-import { json } from "@sveltejs/kit";
 import { asc, eq } from "drizzle-orm";
-import { get_db } from "$lib/server/db";
-import { conversations, messages } from "$lib/server/db/schema";
+import { get_db } from "#lib/server/db/index.js";
+import { conversations, messages } from "#lib/server/db/schema.js";
 import type { RequestHandler } from "./$types";
 
 export const GET: RequestHandler = async ({ params }) => {
@@ -11,7 +10,7 @@ export const GET: RequestHandler = async ({ params }) => {
     .where(eq(messages.conversation_id, params.id))
     .orderBy(asc(messages.created_at));
 
-  return json(rows);
+  return Response.json(rows);
 };
 
 export const DELETE: RequestHandler = async ({ params }) => {

@@ -1,11 +1,11 @@
 <script lang="ts">
-import type { ChatMessage, Conversation } from "$lib/types";
-import Sidebar from "$lib/components/sidebar.svelte";
+import type { ChatMessage, Conversation } from "#lib/types.js";
+import Sidebar from "#lib/components/sidebar.svelte";
 import { tick, onMount } from "svelte";
 import { marked } from "marked";
 import DOMPurify from "dompurify";
 import { Menu, Users, Globe, FileText, Activity, Download, Send, Settings, ChevronDown } from "@lucide/svelte";
-import { api_fetch } from "$lib/api";
+import { api_fetch } from "#lib/api.js";
 
 let messages = $state<ChatMessage[]>([]);
 let input = $state("");

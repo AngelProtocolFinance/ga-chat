@@ -1,7 +1,6 @@
-import { json } from "@sveltejs/kit";
 import { eq, sql } from "drizzle-orm";
-import { get_db } from "$lib/server/db";
-import { conversations, messages } from "$lib/server/db/schema";
+import { get_db } from "#lib/server/db/index.js";
+import { conversations, messages } from "#lib/server/db/schema.js";
 import type { RequestHandler } from "./$types";
 
 export const POST: RequestHandler = async ({ params, request }) => {
@@ -23,5 +22,5 @@ export const POST: RequestHandler = async ({ params, request }) => {
     .set({ updated_at: sql`datetime('now')` })
     .where(eq(conversations.id, params.id));
 
-  return json({ ok: true });
+  return Response.json({ ok: true });
 };

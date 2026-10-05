@@ -1,6 +1,6 @@
-import type { Handle } from "@sveltejs/kit";
-import { json, redirect } from "@sveltejs/kit";
-import { get_cookie_name, validate_session } from "$lib/server/auth";
+import { redirect } from "@sveltejs/kit";
+import type { Handle } from "@sveltejs/kit/hooks";
+import { get_cookie_name, validate_session } from "#lib/server/auth.js";
 
 const PUBLIC_PATHS = ["/login", "/api/login"];
 
@@ -19,7 +19,7 @@ export const handle: Handle = async ({ event, resolve }) => {
   if (!(await validate_session(token))) {
     // a fetch would follow a redirect and get the login page back as a 200
     if (pathname.startsWith("/api/")) {
-      return json({ error: "Unauthorized" }, { status: 401 });
+      return Response.json({ error: "Unauthorized" }, { status: 401 });
     }
     throw redirect(303, "/login");
   }

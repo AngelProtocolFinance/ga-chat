@@ -1,7 +1,6 @@
-import { json } from "@sveltejs/kit";
 import { desc } from "drizzle-orm";
-import { get_db } from "$lib/server/db";
-import { conversations } from "$lib/server/db/schema";
+import { get_db } from "#lib/server/db/index.js";
+import { conversations } from "#lib/server/db/schema.js";
 import type { RequestHandler } from "./$types";
 
 export const GET: RequestHandler = async () => {
@@ -14,7 +13,7 @@ export const GET: RequestHandler = async () => {
     .from(conversations)
     .orderBy(desc(conversations.updated_at));
 
-  return json(rows);
+  return Response.json(rows);
 };
 
 export const POST: RequestHandler = async ({ request }) => {
@@ -25,5 +24,5 @@ export const POST: RequestHandler = async ({ request }) => {
     .values({ title })
     .returning({ id: conversations.id, title: conversations.title });
 
-  return json(row, { status: 201 });
+  return Response.json(row, { status: 201 });
 };

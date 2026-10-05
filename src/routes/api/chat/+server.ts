@@ -1,5 +1,5 @@
-import { chat } from "$lib/server/claude";
-import type { ChatMessage } from "$lib/types";
+import { chat } from "#lib/server/claude.js";
+import type { ChatMessage } from "#lib/types.js";
 import type { RequestHandler } from "./$types";
 
 export const POST: RequestHandler = async ({ request }) => {

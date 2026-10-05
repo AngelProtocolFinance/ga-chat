@@ -1,6 +1,6 @@
 import { createHash, timingSafeEqual } from "node:crypto";
 import { jwtVerify, SignJWT } from "jose";
-import { AUTH_PASSWORD_HASH, JWT_SECRET } from "$env/static/private";
+import { AUTH_PASSWORD_HASH, JWT_SECRET } from "$app/env/private";
 import { parse_scrypt_hash, type ScryptHash, verify_scrypt } from "./password.js";
 
 const SESSION_COOKIE = "ga_chat_session";
