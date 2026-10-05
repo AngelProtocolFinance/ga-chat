@@ -4,9 +4,8 @@ import Sidebar from "$lib/components/sidebar.svelte";
 import { tick, onMount } from "svelte";
 import { marked } from "marked";
 import DOMPurify from "dompurify";
-import { Menu, Users, Globe, FileText, Activity, Download, Send, Settings, ChevronDown } from "lucide-svelte";
-
-marked.setOptions({ async: false });
+import { Menu, Users, Globe, FileText, Activity, Download, Send, Settings, ChevronDown } from "@lucide/svelte";
+import { api_fetch } from "$lib/api";
 
 let messages = $state<ChatMessage[]>([]);
 let input = $state("");
@@ -28,21 +27,21 @@ let config: {
 
 onMount(() => {
 	load_conversations();
-	fetch("/api/config")
+	api_fetch("/api/config")
 		.then((r) => (r.ok ? r.json() : null))
 		.then((data) => (config = data))
 		.catch(() => {});
 });
 
 async function load_conversations() {
-	const res = await fetch("/api/conversations");
+	const res = await api_fetch("/api/conversations");
 	if (res.ok) conversations = await res.json();
 }
 
 async function select_conversation(id: string) {
 	conversation_id = id;
 	sidebar_open = false;
-	const res = await fetch(`/api/conversations/${id}`);
+	const res = await api_fetch(`/api/conversations/${id}`);
 	if (res.ok) {
 		const rows = await res.json();
 		messages = rows.map((r: { role: string; content: string }) => ({
@@ -60,7 +59,8 @@ function new_conversation() {
 }
 
 async function delete_conversation(id: string) {
-	await fetch(`/api/conversations/${id}`, { method: "DELETE" });
+	const res = await api_fetch(`/api/conversations/${id}`, { method: "DELETE" });
+	if (!res.ok) return;
 	conversations = conversations.filter((c) => c.id !== id);
 	if (conversation_id === id) {
 		conversation_id = null;
@@ -91,6 +91,14 @@ function strip_suggestions(content: string): string {
 	return result;
 }
 
+// ahead of a trailing suggestions block, which strip_suggestions would otherwise swallow it with
+function with_save_error(content: string): string {
+	const note = "**Error:** This exchange wasn't saved to the conversation history.";
+	const at = content.search(SUGGESTIONS_RE);
+	if (at === -1) return `${content}\n\n${note}`;
+	return `${content.slice(0, at).trimEnd()}\n\n${note}\n\n${content.slice(at)}`;
+}
+
 async function send_message(e?: Event, override_text?: string) {
 	e?.preventDefault();
 	const text = (override_text ?? input).trim();
@@ -106,7 +114,7 @@ async function send_message(e?: Event, override_text?: string) {
 	let current_conv_id = conversation_id;
 	if (!current_conv_id) {
 		const title = text.length > 80 ? text.slice(0, 80) + "…" : text;
-		const res = await fetch("/api/conversations", {
+		const res = await api_fetch("/api/conversations", {
 			method: "POST",
 			headers: { "Content-Type": "application/json" },
 			body: JSON.stringify({ title }),
@@ -119,7 +127,7 @@ async function send_message(e?: Event, override_text?: string) {
 	}
 
 	try {
-		const res = await fetch("/api/chat", {
+		const res = await api_fetch("/api/chat", {
 			method: "POST",
 			headers: { "Content-Type": "application/json" },
 			body: JSON.stringify({ messages }),
@@ -131,6 +139,8 @@ async function send_message(e?: Event, override_text?: string) {
 		const decoder = new TextDecoder();
 		let assistant_text = "";
 		let buffer = "";
+		// text resuming after a tool call starts a new paragraph instead of running on
+		let tool_since_text = false;
 
 		// pre-allocate assistant message at known index
 		const assistant_idx = messages.length;
@@ -149,14 +159,18 @@ async function send_message(e?: Event, override_text?: string) {
 				const event = JSON.parse(line.slice(6));
 
 				if (event.type === "text") {
+					if (tool_since_text && assistant_text) assistant_text += "\n\n";
+					tool_since_text = false;
 					assistant_text += event.content;
 					// update content via index assignment
 					messages[assistant_idx] = { role: "assistant", content: assistant_text };
 					messages = messages;
 					await scroll_to_bottom();
 				} else if (event.type === "tool_call") {
+					tool_since_text = true;
 					status = event.content;
 				} else if (event.type === "tool_result") {
+					tool_since_text = true;
 					status = event.content;
 				} else if (event.type === "error") {
 					assistant_text += `\n\n**Error:** ${event.content}`;
@@ -164,24 +178,24 @@ async function send_message(e?: Event, override_text?: string) {
 			}
 		}
 
-		// finalize assistant message
-		messages[assistant_idx] = { role: "assistant", content: assistant_text };
-		messages = messages;
-
 		// persist user + assistant messages
-		if (current_conv_id) {
-			await fetch(`/api/conversations/${current_conv_id}/messages`, {
-				method: "POST",
-				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify({
-					messages: [
-						{ role: "user", content: text },
-						{ role: "assistant", content: assistant_text },
-					],
-				}),
-			});
-			await load_conversations();
-		}
+		const saved = current_conv_id !== null && (await api_fetch(`/api/conversations/${current_conv_id}/messages`, {
+			method: "POST",
+			headers: { "Content-Type": "application/json" },
+			body: JSON.stringify({
+				messages: [
+					{ role: "user", content: text },
+					{ role: "assistant", content: assistant_text },
+				],
+			}),
+		})).ok;
+
+		// finalize assistant message; the save error is shown, not persisted
+		messages[assistant_idx] = {
+			role: "assistant",
+			content: saved ? assistant_text : with_save_error(assistant_text),
+		};
+		if (saved) await load_conversations();
 	} catch (err) {
 		messages = [
 			...messages,
@@ -199,11 +213,12 @@ function has_table(content: string): boolean {
 }
 
 async function export_csv(content: string) {
-	const res = await fetch("/api/export", {
+	const res = await api_fetch("/api/export", {
 		method: "POST",
 		headers: { "Content-Type": "application/json" },
 		body: JSON.stringify({ content }),
 	});
+	if (!res.ok) return;
 	const blob = await res.blob();
 	const url = URL.createObjectURL(blob);
 	const a = document.createElement("a");
@@ -214,7 +229,7 @@ async function export_csv(content: string) {
 }
 
 function render_markdown(text: string): string {
-	const html = marked.parse(text) as string;
+	const html = marked.parse(text, { async: false });
 	return DOMPurify.sanitize(html);
 }
 </script>

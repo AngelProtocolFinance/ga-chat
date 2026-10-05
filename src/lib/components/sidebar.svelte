@@ -1,6 +1,6 @@
 <script lang="ts">
 import type { Conversation } from "$lib/types";
-import { Plus, Trash2 } from "lucide-svelte";
+import { Plus, Trash2 } from "@lucide/svelte";
 
 let {
 	conversations,
