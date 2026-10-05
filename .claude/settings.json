@@ -21,6 +21,24 @@
           }
         ]
       }
+    ],
+    "SessionStart": [
+      {
+        "matcher": "startup|resume",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"$CLAUDE_PROJECT_DIR/.claude/cloud-install.sh\""
+          }
+        ]
+      }
     ]
+  },
+  "enabledPlugins": {
+    "vercel@claude-plugins-official": true,
+    "svelte@svelte": true
+  },
+  "env": {
+    "CLAUDE_CODE_ENABLE_TODO_TOOLS": "1"
   }
 }

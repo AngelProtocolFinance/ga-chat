@@ -32,7 +32,7 @@ export async function run_report(params: {
       dimensionFilter: params.dimension_filter as any,
       metricFilter: params.metric_filter as any,
       orderBys: params.order_bys as any,
-      limit: params.limit,
+      limit: params.limit?.toString(),
     },
   });
   return res.data;
@@ -52,7 +52,7 @@ export async function run_realtime_report(params: {
       metrics: params.metrics,
       dimensionFilter: params.dimension_filter as any,
       metricFilter: params.metric_filter as any,
-      limit: params.limit,
+      limit: params.limit?.toString(),
     },
   });
   return res.data;
