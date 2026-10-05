@@ -1,33 +1,19 @@
-import { createHash, scrypt, timingSafeEqual } from "node:crypto";
-import { promisify } from "node:util";
+import { createHash, timingSafeEqual } from "node:crypto";
 import { jwtVerify, SignJWT } from "jose";
 import { AUTH_PASSWORD_HASH, JWT_SECRET } from "$env/static/private";
+import { parse_scrypt_hash, type ScryptHash, verify_scrypt } from "./password.js";
 
 const SESSION_COOKIE = "ga_chat_session";
-const SCRYPT_KEY_BYTES = 64;
 const MIN_JWT_SECRET_LENGTH = 32;
 
-const scrypt_async = promisify(scrypt) as (
-  password: string,
-  salt: Buffer,
-  keylen: number,
-) => Promise<Buffer>;
-
 type StoredHash =
-  | { kind: "scrypt"; salt: Buffer; key: Buffer }
+  | ({ kind: "scrypt" } & ScryptHash)
   | { kind: "sha256"; digest: Buffer }
   | { kind: "invalid" };
 
-// scrypt:<salt-hex>:<key-hex>, as printed by scripts/hash-password.mjs
 function parse_stored_hash(value: string): StoredHash {
-  const scrypt_match = /^scrypt:([0-9a-f]{32}):([0-9a-f]{128})$/i.exec(value);
-  if (scrypt_match) {
-    return {
-      kind: "scrypt",
-      salt: Buffer.from(scrypt_match[1], "hex"),
-      key: Buffer.from(scrypt_match[2], "hex"),
-    };
-  }
+  const scrypt_hash = parse_scrypt_hash(value);
+  if (scrypt_hash) return { kind: "scrypt", ...scrypt_hash };
   if (/^[0-9a-f]{64}$/i.test(value)) {
     console.warn(
       "[auth] AUTH_PASSWORD_HASH is a legacy unsalted sha256 hash; regenerate it with `node scripts/hash-password.mjs`",
@@ -48,10 +34,8 @@ export function get_cookie_name() {
 
 export async function verify_password(password: string): Promise<boolean> {
   switch (stored_hash.kind) {
-    case "scrypt": {
-      const key = await scrypt_async(password, stored_hash.salt, SCRYPT_KEY_BYTES);
-      return timingSafeEqual(key, stored_hash.key);
-    }
+    case "scrypt":
+      return verify_scrypt(password, stored_hash);
     case "sha256": {
       const digest = createHash("sha256").update(password).digest();
       return timingSafeEqual(digest, stored_hash.digest);

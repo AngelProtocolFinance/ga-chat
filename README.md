@@ -28,7 +28,7 @@ Fill in:
 node scripts/hash-password.mjs 'YOUR_PASSWORD'
 ```
 
-Paste the output (a `scrypt:...` string) as `AUTH_PASSWORD_HASH` in `.env`. Omit the argument to be prompted instead, which keeps the password out of shell history.
+Paste the output (a `scrypt:...` string) as `AUTH_PASSWORD_HASH` in `.env`. The password must be at least 16 characters; run with `--generate` instead to get a random one (printed to stderr, hash to stdout), or omit the argument to be prompted, which keeps the password out of shell history.
 
 ### 3. GCP service account
 
