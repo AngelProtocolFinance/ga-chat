@@ -4,10 +4,10 @@
 Load **`kru:lead`** before building, reviewing, or dispatching a seat — it carries how the
 team works.
 
-- **routes** → `kru:sveltekit-builder` — `@sveltejs/kit` 2.55, `src/routes/**/+server.ts`, `src/hooks.server.ts`, `src/lib/server` (except `db/`)
+- **routes** → `kru:sveltekit-builder` — `@sveltejs/kit` 3.0 (config in `vite.config.ts`, env declared in `src/env.ts`), `src/routes/**/+server.ts`, `src/hooks.server.ts`, `src/lib/server` (except `db/`)
 - **ui** → `kru:svelte-ui-builder` — svelte 5.55, `src/lib/components`; `src/routes/+page.svelte` (840 lines) and `login/+page.svelte` hold UI inline, not thin mounts
 - **data** → `kru:turso-specialist` — `@libsql/client` 0.17 + drizzle `dialect: "turso"`, `src/lib/server/db`, `drizzle.config.ts`; local `file:sqlite.db` when `TURSO_DATABASE_URL` is unset
-- **deploy** → `kru:vercel-platform-engineer` — `@sveltejs/adapter-auto`, README → Deploy; Replit via `.replit`
+- **deploy** → `kru:vercel-platform-engineer` — `@sveltejs/adapter-auto`, README → Deploy (Vercel only)
 - **tooling** → `kru:toolchain-engineer` — `biome.json`
 - **skills** → `kru:drizzle` — drizzle-orm 0.45.2
 - **project seats** — `.claude/agents/security-reviewer.md`; prefer it over `kru:code-reviewer` for auth, SSE and GA4 tool-input review
