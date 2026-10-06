@@ -91,7 +91,6 @@ Open [localhost:5173](http://localhost:5173), log in with your password.
 2. Set env vars: `ANTHROPIC_API_KEY`, `GOOGLE_SERVICE_ACCOUNT_JSON`, `GA4_PROPERTY_ID`, `AUTH_PASSWORD_HASH`, `JWT_SECRET`, `TURSO_DATABASE_URL`, `TURSO_AUTH_TOKEN`
 3. Deploy
 
-
 ## Security notes
 
 - Login is one shared password, stored as a salted scrypt hash. After 5 wrong tries an IP address is locked out for 15 minutes.
