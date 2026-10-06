@@ -6,6 +6,9 @@ import { marked } from "marked";
 import DOMPurify from "dompurify";
 import { Menu, Users, Globe, FileText, Activity, Download, Send, Settings, ChevronDown } from "@lucide/svelte";
 import { api_fetch } from "#lib/api.js";
+import type { PageProps } from "./$types";
+
+let { data }: PageProps = $props();
 
 let messages = $state<ChatMessage[]>([]);
 let input = $state("");
@@ -253,7 +256,7 @@ function render_markdown(text: string): string {
 		<button class="menu-btn" onclick={() => sidebar_open = !sidebar_open} aria-label="Toggle sidebar">
 			<Menu size={18} />
 		</button>
-		<h1>GA4 Chat</h1>
+		<h1>{data.app_name}</h1>
 		<span class="badge">GA4 Analytics</span>
 	</header>
 

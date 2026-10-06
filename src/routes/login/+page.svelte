@@ -1,4 +1,7 @@
 <script lang="ts">
+import type { PageProps } from "./$types";
+
+let { data }: PageProps = $props();
 let password = $state("");
 let error = $state("");
 let loading = $state(false);
@@ -41,9 +44,9 @@ async function handle_submit(e: Event) {
         <rect x="13.5" y="12" width="5" height="14" rx="1.5" fill="var(--accent-hover)"/>
         <rect x="21" y="6" width="5" height="20" rx="1.5" fill="#7dd3fc"/>
       </svg>
-      <h1>GA4 Chat</h1>
+      <h1>{data.app_name}</h1>
     </div>
-    <p class="subtitle">GA4 Chat</p>
+    <p class="subtitle">Ask your Google Analytics in plain English</p>
 
     <form onsubmit={handle_submit}>
       <input

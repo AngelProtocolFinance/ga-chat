@@ -1,9 +1,13 @@
 <script lang="ts">
-import type { Snippet } from "svelte";
+import type { LayoutProps } from "./$types";
 import "../app.css";
 
-let { children }: { children: Snippet } = $props();
+let { data, children }: LayoutProps = $props();
 </script>
+
+<svelte:head>
+	<title>{data.app_name}</title>
+</svelte:head>
 
 <div class="app-layout">
 	{@render children()}
