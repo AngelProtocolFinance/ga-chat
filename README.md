@@ -7,7 +7,7 @@ Ask your Google Analytics questions in plain English. Self-hosted, open source, 
 
 - **Plain-English answers** — "which campaigns drove donations last month?" → Claude queries your GA4 property and answers with tables and follow-up suggestions.
 - **Built for the whole team** — one shared login, saved conversations, CSV export. No per-seat AI subscription; you pay only for the Anthropic API calls you make.
-- **Yours to keep** — runs on your own Vercel or Replit account with your own keys. Read-only access to Analytics. MIT licensed.
+- **Yours to keep** — runs on your own Vercel account with your own keys. Read-only access to Analytics. MIT licensed.
 
 [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/ap-justin/ga4-chat&env=ANTHROPIC_API_KEY,GOOGLE_SERVICE_ACCOUNT_JSON,GA4_PROPERTY_ID,AUTH_PASSWORD_HASH,JWT_SECRET,TURSO_DATABASE_URL,TURSO_AUTH_TOKEN)
 
@@ -30,6 +30,8 @@ Fill in:
 | `JWT_SECRET` | `openssl rand -hex 32` |
 | `TURSO_DATABASE_URL` | *(optional)* Turso database URL — omit to use local SQLite file |
 | `TURSO_AUTH_TOKEN` | *(optional)* Turso auth token |
+| `ORG_CONTEXT` | *(optional)* A few sentences about your organization (mission, key events like `donate`) — added to the assistant's instructions |
+| `APP_NAME` | *(optional)* Name shown in the app — defaults to `GA4 Chat`, max 60 chars |
 
 ### 2. Generate password hash
 
@@ -89,11 +91,6 @@ Open [localhost:5173](http://localhost:5173), log in with your password.
 2. Set env vars: `ANTHROPIC_API_KEY`, `GOOGLE_SERVICE_ACCOUNT_JSON`, `GA4_PROPERTY_ID`, `AUTH_PASSWORD_HASH`, `JWT_SECRET`, `TURSO_DATABASE_URL`, `TURSO_AUTH_TOKEN`
 3. Deploy
 
-### Replit
-
-1. Import repo from GitHub
-2. Set all env vars in Secrets (same as above, but `TURSO_DATABASE_URL` and `TURSO_AUTH_TOKEN` are optional — omit to use local SQLite)
-3. Hit **Run** — dev server starts on port 3000
 
 ## Security notes
 

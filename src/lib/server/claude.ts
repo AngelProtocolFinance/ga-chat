@@ -1,28 +1,11 @@
 import Anthropic from "@anthropic-ai/sdk";
-import { ANTHROPIC_API_KEY } from "$app/env/private";
+import { ANTHROPIC_API_KEY, ORG_CONTEXT } from "$app/env/private";
+import { build_system_prompt } from "./system-prompt.js";
 import { execute_tool, tool_definitions } from "./tools.js";
 
 const anthropic = new Anthropic({ apiKey: ANTHROPIC_API_KEY });
 
-const SYSTEM_PROMPT = `You are a Google Analytics expert assistant. You help users understand their GA4 traffic data by querying the analytics API.
-
-When answering questions:
-- Use the run_report tool for historical data (pageviews, sessions, users, traffic sources, conversions, etc.)
-- Use run_realtime_report for current/live data (active users right now)
-- Use get_property_details to discover available dimensions and metrics
-- Always format data in markdown tables when returning tabular results
-- Include totals and percentages where helpful
-- Be concise but insightful — highlight notable trends or anomalies
-- Default to the last 7 days if no date range is specified
-- Common GA4 dimensions: date, pagePath, pageTitle, sessionSource, sessionMedium, country, city, deviceCategory, browser
-- Common GA4 metrics: activeUsers, sessions, screenPageViews, bounceRate, averageSessionDuration, conversions, totalRevenue
-- When your response invites follow-up, end with a <suggestions> block (2-4 short prompts, one per line):
-
-<suggestions>
-Where did the traffic come from?
-Which pages were most visited?
-How does this compare to last week?
-</suggestions>`;
+const SYSTEM_PROMPT = build_system_prompt(ORG_CONTEXT);
 
 export interface StreamEvent {
   type: "text" | "tool_call" | "tool_result" | "done" | "error";
