@@ -2,8 +2,8 @@
 
 Ask your Google Analytics questions in plain English. Self-hosted, open source, built for nonprofit teams without an analyst.
 
-<!-- demo: replace with a gif/screenshot of a real question → answer -->
-![GA4 Chat demo](static/demo.gif)
+<!-- demo: swap for a gif of a real question → answer -->
+![GA4 Chat](static/screenshot.png)
 
 - **Plain-English answers** — "which campaigns drove donations last month?" → Claude queries your GA4 property and answers with tables and follow-up suggestions.
 - **Built for the whole team** — one shared login, saved conversations, CSV export. No per-seat AI subscription; you pay only for the Anthropic API calls you make.
